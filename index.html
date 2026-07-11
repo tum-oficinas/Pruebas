@@ -899,9 +899,9 @@
       m: fields.metros.value,
       t: fields.talla.value,
       e: fields.espacioEstado.value,
-      p1: fields.opt1Plan.value, f1: fields.opt1Frecuencia.value, s1: fields.opt1Subtotal.value,
-      p2: fields.opt2Plan.value, f2: fields.opt2Frecuencia.value, s2: fields.opt2Subtotal.value,
-      po: planElegidoOpcion
+      p: planElegidoNombre(),
+      f: frecuenciaElegida(),
+      s: totalPlan()
     };
     const encoded = encodeQuoteData(data);
     const url = new URL(window.location.href.split('?')[0]);
@@ -942,7 +942,7 @@
       height: 200,
       colorDark: '#0B1322',
       colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
+      correctLevel: QRCode.CorrectLevel.L
     });
 
     $('qr-overlay').classList.add('show');
@@ -1011,13 +1011,10 @@
     fields.talla.value = data.t || 'S';
     fields.espacioEstado.value = data.e || '';
     actualizarHabilitacionEstadoEspacio();
-    fields.opt1Plan.value = data.p1 || 'TUM PRO';
-    fields.opt1Frecuencia.value = data.f1 || 'Única vez';
-    fields.opt1Subtotal.value = data.s1 || '';
-    fields.opt2Plan.value = data.p2 || 'TUM MINI';
-    fields.opt2Frecuencia.value = data.f2 || 'Semanal';
-    fields.opt2Subtotal.value = data.s2 || '';
-    setPlanElegidoOpcion(data.po || '');
+    fields.opt1Plan.value = data.p || 'TUM PRO';
+    fields.opt1Frecuencia.value = data.f || 'Única vez';
+    fields.opt1Subtotal.value = data.s || '';
+    setPlanElegidoOpcion('1');
     recalc();
 
     // Ocultar controles de edición: el cliente solo debe ver su presupuesto
@@ -1040,7 +1037,7 @@
     if(!q) return;
     try{
       const data = decodeQuoteData(q);
-      if(data && (data.p1 || data.p2)) activarVistaCliente(data);
+      if(data && data.p) activarVistaCliente(data);
     } catch(e){
       showStatus('El link del presupuesto no es válido', 'err');
     }
