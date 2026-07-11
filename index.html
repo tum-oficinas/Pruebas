@@ -438,6 +438,18 @@
     <!-- TOTAL TICKET -->
     <div class="tum-ticket">
       <div class="tum-ticket-label">Resumen del servicio</div>
+      <div class="tum-ticket-row" id="bk-tamano-row" style="display:none;">
+        <span>Tamaño del espacio</span>
+        <b id="bk-tamano">—</b>
+      </div>
+      <div class="tum-ticket-row" id="bk-plan-nombre-row" style="display:none;">
+        <span>Plan elegido</span>
+        <b id="bk-plan-nombre">—</b>
+      </div>
+      <div class="tum-ticket-row" id="bk-frecuencia-row" style="display:none;">
+        <span>Frecuencia</span>
+        <b id="bk-frecuencia">—</b>
+      </div>
       <div class="tum-ticket-row">
         <span>Costo plan elegido</span>
         <b id="bk-plan">Bs 0</b>
@@ -676,6 +688,32 @@
     const total = tPlan;
     $('bk-plan').textContent = 'Bs ' + tPlan.toLocaleString('es-BO');
     $('ticket-total').innerHTML = 'Bs ' + total.toLocaleString('es-BO') + '<span>.00</span>';
+
+    const nombrePlan = planElegidoNombre();
+    const freq = frecuenciaElegida();
+    const metros = fields.metros.value;
+    const talla = fields.talla.value;
+
+    if(nombrePlan){
+      $('bk-plan-nombre').textContent = nombrePlan;
+      $('bk-plan-nombre-row').style.display = 'flex';
+    } else {
+      $('bk-plan-nombre-row').style.display = 'none';
+    }
+
+    if(freq){
+      $('bk-frecuencia').textContent = freq;
+      $('bk-frecuencia-row').style.display = 'flex';
+    } else {
+      $('bk-frecuencia-row').style.display = 'none';
+    }
+
+    if(metros){
+      $('bk-tamano').textContent = metros + ' m² · Talla ' + talla;
+      $('bk-tamano-row').style.display = 'flex';
+    } else {
+      $('bk-tamano-row').style.display = 'none';
+    }
   }
 
   // ---------- collect / load form ----------
