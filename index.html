@@ -132,7 +132,7 @@
 
     /* ── Input dimensión (unificado, con sufijo m² integrado) ── */
     .dim-input-wrap { position: relative; }
-    .dim-input-wrap input[type="number"] {
+    .dim-input-wrap input {
       width: 100%;
       height: 50px;
       border: 1.5px solid var(--border-strong);
@@ -145,14 +145,14 @@
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .dim-input-wrap input[type="number"]:focus {
+    .dim-input-wrap input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(201,255,77,0.15);
       background: var(--surface);
     }
-    .dim-input-wrap input[type="number"]::placeholder { color: var(--text-muted); font-weight: 600; }
-    .dim-input-wrap input[type="number"]::-webkit-inner-spin-button,
-    .dim-input-wrap input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .dim-input-wrap input::placeholder { color: var(--text-muted); font-weight: 600; }
+    .dim-input-wrap input::-webkit-inner-spin-button,
+    .dim-input-wrap input::-webkit-outer-spin-button { -webkit-appearance: none; }
     .dim-unit {
       position: absolute;
       right: 16px;
@@ -345,57 +345,139 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
+      margin-top: 16px;
+      align-items: stretch;
     }
 
     .plan-card {
-      border: 0.5px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem 0.75rem;
-      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.1rem 0.7rem 1rem;
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.035), transparent 60%),
+        var(--surface);
       cursor: pointer;
-      transition: border-color 0.15s, transform 0.1s;
+      transition: border-color 0.18s, transform 0.28s cubic-bezier(.34,1.4,.64,1), box-shadow 0.28s, background 0.18s;
+      transform-origin: center bottom;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       user-select: none;
+      min-width: 0;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 16px -12px rgba(0,0,0,0.5);
     }
-    .plan-card:hover { border-color: var(--border-strong); }
-    .plan-card:active { transform: scale(0.97); }
+    .plan-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .plan-card:active { transform: scale(0.96); }
+
+    /* Zoom unificado al seleccionar: misma fisica en las tres tarjetas,
+       para que se sientan parte de un mismo sistema, no piezas sueltas. */
     .plan-card.selected {
-      border: 2px solid var(--accent);
-      background: var(--accent-bg);
+      border: 1.5px solid var(--accent);
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(201,255,77,0.10), transparent 60%),
+        var(--accent-bg);
+      transform: scale(1.07) translateY(-4px);
+      z-index: 5;
+      box-shadow:
+        0 0 0 1px rgba(201,255,77,0.2),
+        0 20px 34px -16px rgba(201,255,77,0.45),
+        0 1px 0 rgba(255,255,255,0.05) inset;
     }
 
+    /* Plan recomendado (Mantenimiento): jerarquia real, no solo un badge */
+    .plan-card[data-plan="mantenimiento"] {
+      border: 1.5px solid var(--accent);
+      background:
+        radial-gradient(120% 100% at 50% 0%, rgba(201,255,77,0.14), transparent 65%),
+        var(--surface);
+      box-shadow:
+        0 0 0 1px rgba(201,255,77,0.12),
+        0 14px 28px -14px rgba(201,255,77,0.35),
+        0 1px 0 rgba(255,255,255,0.03) inset;
+      z-index: 1;
+    }
+    .plan-card[data-plan="mantenimiento"].selected {
+      z-index: 6;
+    }
+    .recommended-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+      color: var(--accent-ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 20px;
+      box-shadow: 0 3px 10px rgba(201,255,77,0.45), 0 0 0 3px var(--bg);
+      white-space: nowrap;
+    }
+    .recommended-badge svg { width: 10px; height: 10px; }
+    .plan-savings {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-text);
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+    .plan-savings.visible { display: flex; }
+    .plan-savings svg { width: 11px; height: 11px; }
+
     .plan-icon {
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       border-radius: 14px;
-      background: var(--surface-2);
-      border: 0.5px solid var(--border);
+      background: radial-gradient(80% 80% at 30% 20%, #12182A, #080B12);
+      border: 1.5px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .plan-card:hover .plan-icon { transform: translateY(-1px); }
-    .plan-icon svg { width: 22px; height: 22px; color: var(--text-secondary); }
+    .plan-icon svg { width: 24px; height: 24px; color: var(--text-secondary); }
 
-    /* Íconos temáticos por plan */
-    .plan-card[data-plan="inicial"] .plan-icon { background: rgba(96,165,250,0.14); border-color: transparent; }
+    /* Íconos temáticos por plan: insignia con relieve + resplandor de color propio */
+    .plan-card[data-plan="inicial"] .plan-icon {
+      border-color: rgba(125,180,255,0.55);
+      box-shadow: 0 0 12px rgba(125,180,255,0.25), inset 0 1px 0 rgba(125,180,255,0.08);
+    }
     .plan-card[data-plan="inicial"] .plan-icon svg { color: #7DB4FF; }
-    .plan-card[data-plan="mantenimiento"] .plan-icon { background: rgba(201,255,77,0.14); border-color: transparent; }
+    .plan-card[data-plan="mantenimiento"] .plan-icon {
+      border-color: rgba(201,255,77,0.6);
+      box-shadow: 0 0 16px rgba(201,255,77,0.3), inset 0 1px 0 rgba(201,255,77,0.1);
+    }
     .plan-card[data-plan="mantenimiento"] .plan-icon svg { color: var(--accent); }
-    .plan-card[data-plan="critico"] .plan-icon { background: rgba(255,122,122,0.14); border-color: transparent; }
+    .plan-card[data-plan="critico"] .plan-icon {
+      border-color: rgba(255,122,122,0.55);
+      box-shadow: 0 0 12px rgba(255,122,122,0.25), inset 0 1px 0 rgba(255,122,122,0.08);
+    }
     .plan-card[data-plan="critico"] .plan-icon svg { color: var(--danger); }
 
     .plan-card.selected .plan-icon {
-      box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--accent);
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--accent), 0 0 14px rgba(201,255,77,0.35);
     }
 
-    .plan-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .plan-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
     .plan-factor { font-size: 11px; color: var(--text-muted); margin-top: 2px; margin-bottom: 8px; }
     .plan-price {
       align-self: stretch;
@@ -403,25 +485,84 @@
       font-size: 19px;
       font-weight: 700;
       letter-spacing: -0.3px;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 5px 8px;
+      margin-top: 10px;
+      min-height: 22px;
+      opacity: 0.55;
+      transition: color 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
+    }
+    .plan-price.active {
+      opacity: 1;
       color: var(--text-primary);
       background: var(--surface-2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 5px 8px;
-      margin-top: 8px;
-      min-height: 22px;
-      transition: color 0.15s, background 0.15s, border-color 0.15s;
-    }
-    .plan-price.active {
-      color: var(--accent-text);
-      background: var(--accent-bg);
-      border-color: var(--accent);
     }
     .plan-card.selected .plan-price.active {
       color: var(--accent-ink);
       background: var(--accent);
       border-color: var(--accent);
     }
+
+    /* ── Jerarquía profesional del precio en Mantenimiento:
+       el precio grande SIEMPRE es el valor recomendado (x1, 1 cara) —
+       es el gancho de venta. El total real con ambos lados, cuando el
+       toggle está activo, se muestra como dato secundario y discreto,
+       disponible para el discurso sin competir con el precio ancla. ── */
+    .plan-price-wrap {
+      position: relative;
+      width: 100%;
+    }
+    /* El precio de Mantenimiento es el protagonista de la vitrina:
+       un poco más grande que los otros dos planes y con espacio inferior
+       reservado para la etiqueta "1 cara". */
+    .plan-card[data-plan="mantenimiento"] .plan-price {
+      padding-bottom: 15px;
+    }
+    .plan-price-tag {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--accent-ink);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+    .plan-price.active + .plan-price-tag,
+    .plan-price-tag.visible { opacity: 0.6; }
+
+    .plan-price-both {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 7px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .plan-price-both.visible { display: flex; }
+    .plan-price-both svg { width: 11px; height: 11px; opacity: 0.55; flex-shrink: 0; }
+    .plan-price-both-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .plan-price-both-sub { opacity: 0.7; }
+    .plan-price-both-savings {
+      color: var(--accent-text);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+    .plan-price-both-savings::before { content: '· '; opacity: 0.6; }
 
     .check-dot {
       position: absolute;
@@ -637,11 +778,20 @@
     }
     .footer a:hover { color: var(--accent-text); }
 
-    @media (max-width: 400px) {
-      .plans-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .plan-card { padding: 0.75rem 0.5rem; }
+    @media (max-width: 480px) {
+      .plans-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+      .plan-card { grid-column: span 2; padding: 0.75rem 0.5rem; }
+      .plan-card.selected {
+        grid-column: 1 / -1;
+        order: -1;
+        transform: translateY(-2px);
+      }
+      .plans-grid:has(.plan-card.selected) .plan-card:not(.selected) {
+        grid-column: span 3;
+      }
       .plan-name { font-size: 11px; }
       .plan-price { font-size: 16px; padding: 4px 4px; }
+      .plan-card[data-plan="mantenimiento"] .plan-price { padding-bottom: 15px; }
       .actions { flex-wrap: wrap; }
       .actions .btn { flex: 1 1 calc(50% - 4px); }
     }
@@ -839,17 +989,19 @@
         <line x1="5" y1="10" x2="19" y2="10"/>
       </symbol>
       <symbol id="i-droplet" viewBox="0 0 24 24">
-        <path d="M12 3.2c-.4.5-1.2 1.5-2 2.8-1.9 3-3.7 6.1-3.7 8.6a5.7 5.7 0 0 0 11.4 0c0-2.5-1.8-5.6-3.7-8.6-.8-1.3-1.6-2.3-2-2.8z"/>
-        <path d="M9.3 15.5a2.7 2.7 0 0 0 2.7 2.7"/>
+        <path d="M12 3.4c-.4.5-1.3 1.7-2.2 3.1C7.9 9.2 6 12.4 6 14.8a6 6 0 0 0 12 0c0-2.4-1.9-5.6-3.8-8.3-.9-1.4-1.8-2.6-2.2-3.1z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M9.3 15.4a2.8 2.8 0 0 0 2.8 2.8" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M17.1 4.7l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="currentColor" stroke="none"/>
       </symbol>
       <symbol id="i-gear" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <rect x="2.8" y="4.6" width="13" height="4.6" rx="2.3" transform="rotate(-30 9.3 6.9)" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12.6 10.2L18.6 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="19.2" cy="20.9" r="1.4" fill="currentColor" stroke="none"/>
+        <path d="M5.3 12.4c-.3.5-.8 1.2-.8 1.7a.85.85 0 0 0 1.7 0c0-.5-.6-1.2-.9-1.7z" fill="currentColor" fill-opacity="0.6" stroke="none"/>
       </symbol>
       <symbol id="i-shield-alert" viewBox="0 0 24 24">
-        <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/>
-        <line x1="12" y1="8" x2="12" y2="13"/>
-        <line x1="12" y1="16" x2="12" y2="16.01"/>
+        <path d="M12 3.2l6.5 2.8v5.6c0 4.3-2.8 7.3-6.5 8.7-3.7-1.4-6.5-4.4-6.5-8.7V6l6.5-2.8z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 8.3l1.1 2.5 2.5 1.1-2.5 1.1-1.1 2.5-1.1-2.5-2.5-1.1 2.5-1.1z" fill="currentColor" stroke="none"/>
       </symbol>
       <symbol id="i-file-invoice" viewBox="0 0 24 24">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -961,7 +1113,7 @@
       <div class="measures-list" id="measuresList">
         <div class="measure-row" data-row-id="1">
           <div class="dim-input-wrap">
-            <input type="number" class="measure-input" placeholder="0" min="0" step="any" inputmode="decimal" />
+            <input type="text" class="measure-input" placeholder="0" inputmode="decimal" />
             <span class="dim-unit">m²</span>
           </div>
           <button type="button" class="measure-remove" onclick="removeMeasure(this)" aria-label="Quitar medida">
@@ -1014,10 +1166,25 @@
         </div>
 
         <div class="plan-card" data-plan="mantenimiento" data-mult="25" onclick="selectPlan(this)">
+          <div class="recommended-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8L5.8 21l1.6-7L2 9.2l7.1-.6L12 2z"/></svg>
+            Recomendado
+          </div>
           <div class="check-dot"><svg class="icon"><use href="#i-check"></use></svg></div>
           <div class="plan-icon"><svg class="icon"><use href="#i-gear"></use></svg></div>
           <div class="plan-name">Mantenimiento</div>
-          <div class="plan-price" id="price-mantenimiento">—</div>
+          <div class="plan-price-wrap">
+            <div class="plan-price" id="price-mantenimiento">—</div>
+            <div class="plan-price-tag" id="price-mantenimiento-tag">1 cara</div>
+          </div>
+          <div class="plan-price-both" id="price-mantenimiento-both">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 7h13M8 12h13M8 17h13M3 7h.01M3 12h.01M3 17h.01"/></svg>
+            <span class="plan-price-both-value">—</span> <span class="plan-price-both-sub">ambos lados</span><span class="plan-price-both-savings" id="price-mantenimiento-both-savings"></span>
+          </div>
+          <div class="plan-savings" id="price-mantenimiento-savings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12l4 4 8-8"/></svg>
+            <span>Ahorra vs. limpieza intensiva</span>
+          </div>
         </div>
 
         <div class="plan-card" data-plan="critico" data-mult="35" onclick="selectPlan(this)">
@@ -1151,8 +1318,30 @@
     const segBoth  = document.getElementById('segBoth');
 
     measuresList.addEventListener('input', (e) => {
-      if (e.target.classList.contains('measure-input')) recalcMeasures();
+      if (e.target.classList.contains('measure-input')) {
+        sanitizeMeasureInput(e.target);
+        recalcMeasures();
+      }
     });
+
+    // Normaliza lo que el usuario escribe en un campo de medida: acepta
+    // coma o punto como separador decimal (teclados en español suelen
+    // insertar coma) y descarta cualquier otro caracter no numérico,
+    // sin alterar la lógica de cálculo ni de redondeo existente.
+    function sanitizeMeasureInput(input) {
+      const cursorFromEnd = input.value.length - (input.selectionEnd ?? input.value.length);
+      let v = input.value.replace(',', '.');
+      v = v.replace(/[^0-9.]/g, '');
+      const firstDot = v.indexOf('.');
+      if (firstDot !== -1) {
+        v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, '');
+      }
+      if (v !== input.value) {
+        input.value = v;
+        const pos = Math.max(0, v.length - cursorFromEnd);
+        try { input.setSelectionRange(pos, pos); } catch (e) {}
+      }
+    }
 
     function createMeasureRow(value) {
       const row = document.createElement('div');
@@ -1162,11 +1351,9 @@
       wrap.className = 'dim-input-wrap';
 
       const input = document.createElement('input');
-      input.type = 'number';
+      input.type = 'text';
       input.className = 'measure-input';
       input.placeholder = '0';
-      input.min = '0';
-      input.step = 'any';
       input.inputMode = 'decimal';
       if (value !== null && value !== undefined && value !== '') {
         const n = parseFloat(value);
@@ -1284,12 +1471,49 @@
       const dim = effectiveDimension();
       Object.entries(PLANS).forEach(([key, plan]) => {
         const el = document.getElementById('price-' + key);
-        if (dim > 0) {
-          el.textContent = fmt(dim * plan.mult);
+        const isMantenimiento = key === 'mantenimiento';
+
+        // Mantenimiento es el plan que se recomienda: su precio grande
+        // SIEMPRE se muestra en x1 (1 cara), sea cual sea el toggle
+        // seleccionado — es el valor ancla que se quiere destacar.
+        // Inicial e Intensivo sí respetan el toggle normalmente.
+        const priceDim = isMantenimiento ? dimension : dim;
+
+        if (priceDim > 0) {
+          el.textContent = fmt(priceDim * plan.mult);
           el.classList.add('active');
         } else {
           el.textContent = '—';
           el.classList.remove('active');
+        }
+
+        if (isMantenimiento) {
+          const tag = document.getElementById('price-mantenimiento-tag');
+          if (tag) tag.classList.toggle('visible', dimension > 0);
+
+          // Dato secundario y discreto: el total real si se cotiza con
+          // ambos lados. Disponible para el discurso de venta sin competir
+          // visualmente con el precio ancla de arriba.
+          const diffMult = PLANS.critico.mult - PLANS.mantenimiento.mult;
+
+          const both = document.getElementById('price-mantenimiento-both');
+          if (both) {
+            if (bothSides && dimension > 0) {
+              both.querySelector('.plan-price-both-value').textContent = fmt(dim * plan.mult);
+              const bothSavings = document.getElementById('price-mantenimiento-both-savings');
+              if (bothSavings) bothSavings.textContent = 'ahorras ' + fmt(dim * diffMult);
+              both.classList.add('visible');
+            } else {
+              both.classList.remove('visible');
+            }
+          }
+
+          const savings = document.getElementById('price-mantenimiento-savings');
+          if (savings) {
+            const pct = Math.round((1 - PLANS.mantenimiento.mult / PLANS.critico.mult) * 100);
+            savings.querySelector('span').textContent = 'Ahorra ' + pct + '% (' + fmt(dimension * diffMult) + ') vs. intensivo';
+            savings.classList.toggle('visible', dimension > 0);
+          }
         }
       });
     }
